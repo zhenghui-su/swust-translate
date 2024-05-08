@@ -9,6 +9,7 @@ import {
 	Dimensions,
 } from 'react-native';
 import translateFunc from '../api/translate';
+import useTranslateStore from '../store/TranslateStore';
 
 const { width } = Dimensions.get('window');
 
@@ -18,11 +19,21 @@ export default function HomeScreen() {
 	// 存储翻译结果
 	const [result, setResult] = useState('');
 
+	// 获取当前的语言
+	const languages = useTranslateStore((state) => state.languages.lanList);
+	const curIndex = useTranslateStore((state) => state.languages.curIndex);
+	const currentLanguage = languages[curIndex].chs;
+	const lang = languages[curIndex].lang;
+
+	// 增加历史记录
+	const addHistory = useTranslateStore((state) => state.addHistory);
+
 	function pressHandle() {
 		if (content) {
 			// 进行翻译
-			translateFunc(content, { from: 'auto', to: 'en' }).then((res) => {
+			translateFunc(content, { from: 'auto', to: `${lang}` }).then((res) => {
 				setResult(res);
+				addHistory(content, res);
 			});
 		}
 	}
@@ -40,7 +51,7 @@ export default function HomeScreen() {
 							fontWeight: '900',
 						}}
 					>
-						英语
+						{currentLanguage}
 					</Text>
 				</Text>
 			</View>

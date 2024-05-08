@@ -1,22 +1,32 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
-
-const languages = ['英语', '法语', '德语', '日语'];
+import useTranslateStore from '../store/TranslateStore';
 
 export default function LanguageScreen() {
+	// 获取语言列表
+	const languages = useTranslateStore((state) => state.languages.lanList);
+	// 获取当前选中的语言
+	const curIndex = useTranslateStore((state) => state.languages.curIndex);
+	// 获取改变语言
+	const changeLanguage = useTranslateStore((state) => state.changeLanguage);
+
+	const pressHandle = (index) => {
+		changeLanguage(index);
+	};
+
 	return (
 		<ScrollView>
 			{languages.map((item, index) => {
 				return (
-					<Pressable key={index}>
-						{index === 0 ? (
+					<Pressable key={index} onPress={() => pressHandle(index)}>
+						{index === curIndex ? (
 							<View style={[styles.lanItem, styles.selected]}>
-								<Text style={styles.lanTitle}>{item}</Text>
+								<Text style={styles.lanTitle}>{item.chs}</Text>
 								<AntDesign name='check' size={20} color='#555' />
 							</View>
 						) : (
 							<View style={styles.lanItem}>
-								<Text style={styles.lanTitle}>{item}</Text>
+								<Text style={styles.lanTitle}>{item.chs}</Text>
 							</View>
 						)}
 					</Pressable>
